@@ -10,7 +10,9 @@ import org.json.JSONArray
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLConnection
 import java.util.Scanner
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             try{
                 val url = URL(urlString)
                 val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+
                 connection.connectTimeout = 10000
                 connection.readTimeout = 10000
                 connection.requestMethod = "GET"
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                     val scanner = Scanner(connection.inputStream).useDelimiter("\\A")
                     val text = if (scanner.hasNext()) scanner.next() else ""
 
-                    val quote = processQuoteJson(text)
+                    val quote = processChuckNorrisQuoteJson(text)
                     updateTextView(quote)
                 }else{
                     updateTextView("The server has returned an error: $responseCode")
@@ -73,12 +76,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun getQuote(){
         // Calls fetchData with the API
-        fetchData("https://ron-swanson-quotes.herokuapp.com/v2/quotes")
+        val chuckNorrisQuote = "https://api.chucknorris.io/jokes/random"
+        val ronSwansonQuote = "https://ron-swanson-quotes.herokuapp.com/v2/quotes"
+        fetchData(chuckNorrisQuote)
     }
 
     private fun processQuoteJson (jsonString: String) : String{
         // Converts the json from the API to a regular string
         val jsonArray = JSONArray(jsonString)
         return jsonArray[0].toString()
+    }
+
+    private fun processChuckNorrisQuoteJson (jsonString: String) : String{
+        // Converts the API output to a json object
+        val jsonObject = JSONObject(jsonString)
+        // Gets the string stored in the key value
+        val jsonArray = jsonObject.getString("value")
+
+        return jsonArray.toString()
     }
 }
