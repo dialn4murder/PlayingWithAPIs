@@ -1,7 +1,9 @@
 package com.example.playingwithapis
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        setSupportActionBar(binding.myToolbar)
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,6 +38,9 @@ class MainActivity : AppCompatActivity() {
             getQuote()
         }
 
+        binding.favourites.setOnClickListener(){
+            // TODO ADD TO LIST
+        }
     }
 
     private fun fetchData(urlString: String){
@@ -94,5 +100,11 @@ class MainActivity : AppCompatActivity() {
         val jsonArray = jsonObject.getString("value")
 
         return jsonArray.toString()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Places icon on toolbar
+        menuInflater.inflate(R.menu.menu,menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
